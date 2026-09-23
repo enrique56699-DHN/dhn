@@ -1,0 +1,378 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor..
+ */
+
+/*
+ * VClientes.java
+ * * Created on 11-nov-2013, 17:33:35
+ */
+package VISTA;
+
+import CONTROLADOR.ControlEntradas;
+import CONTROLADOR.ControlPagos;
+import CONTROLADOR.F;
+import DHNv2.G;
+import MODELO.ModeloEntradas;
+import MODELO.ModeloPagosTabla;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+
+/**
+ *
+ * @author KIKE FRENCH
+ */
+public class VCPagos extends javax.swing.JInternalFrame {
+    
+    private String IDRECIBO,FECHA,METODO,MONTO,TITULAR,COMENTARIOS,D_CORTE,fecha;
+    private int IDNOTA,IDCONTRATO;
+    private float monto;
+    private float TOTAL;
+    //int IDCAJA = G.IDCAJA;
+    
+    /*private Date N_CORTE;
+    private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+    
+    private Date fmes=null;
+    private final Date hoy= new Date();*/
+    String CP = "VICTOR";
+    
+    /** Creates new form VClientes*/
+    public VCPagos(){                
+    }
+
+    public VCPagos(String titulo) throws ClassNotFoundException, SQLException, Exception {                
+        initComponents();
+        this.setTitle(titulo);
+        permisos(Principal.PRIVILEGIOS);
+        actualizarTablas();
+        this.Bar.setFloatable(false);
+        F.teclas(this);
+        
+    }
+    
+    private void permisos(String PRIVILEGIOS)
+    {
+        if(PRIVILEGIOS.equals("SADMIN"))
+        {
+            btnSALDAR.setEnabled(true);
+            btnSALDAR1.setEnabled(true);
+        }
+    }
+    
+        
+    private void seleccion() throws ClassNotFoundException, SQLException
+    {
+        int fila = tblPAGOS.getSelectedRow();
+        IDRECIBO = tblPAGOS.getValueAt(fila, 0).toString();
+        IDNOTA = Integer.parseInt(IDRECIBO);
+        FECHA = tblPAGOS.getValueAt(fila, 3).toString();
+        IDCONTRATO = (int) tblPAGOS.getValueAt(fila, 2);
+        METODO = tblPAGOS.getValueAt(fila, 4).toString();
+        MONTO = tblPAGOS.getValueAt(fila, 5).toString();
+        String d1 =tblPAGOS.getValueAt(fila, 5).toString();
+        String d2 = d1.replaceAll("[$ ,]", "");
+        monto = Float.parseFloat(d2);
+        //monto = Float.parseFloat(Arrays.toString(datos));
+        COMENTARIOS = tblPAGOS.getValueAt(fila, 6).toString();
+
+    }
+    
+    private void accion(String ACCION) throws Exception
+    {
+        FECHA = G.FECHA(G.hoy(),true);
+        switch(ACCION)
+        {
+            case "SALDAR":
+                for(int i=0; i<tblPAGOS.getRowCount(); i++)
+                {
+                    IDNOTA = (int) tblPAGOS.getValueAt(i, 0);
+                    IDCONTRATO = (int) tblPAGOS.getValueAt(i, 2);
+                    MONTO = tblPAGOS.getValueAt(i, 5).toString();
+                    String d1 =tblPAGOS.getValueAt(i, 5).toString();
+                    String d2 = d1.replaceAll("[$ ,]", "");
+                    monto = Float.parseFloat(d2);
+                    COMENTARIOS = tblPAGOS.getValueAt(i, 6).toString();                    
+                    IO();                    
+                }
+                JOptionPane.showMessageDialog(this,"CUENTA SALDADA POR: \n"+"$ "+G.numero.format(TOTAL)+".00","RESULTADO",JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case "UNO":
+                IO();
+                JOptionPane.showMessageDialog(this,"CUENTA SALDADA POR: \n"+"$ "+G.numero.format(monto)+".00","RESULTADO",JOptionPane.INFORMATION_MESSAGE);
+                break;
+            default:
+                break;                
+        }
+        
+    }
+    
+    private void IO() throws SQLException, Exception
+    {
+        ModeloEntradas md = new ModeloEntradas();
+
+        md.setDESCRIPCION("PAGO PRESTAMO DE CP: " + CP + ", POR CONTRATO: " + IDCONTRATO);
+        md.setMONTO(monto);
+        md.setCATEGORIA("PAGO");
+        md.setMETODO("EFECTIVO");
+        md.setFECHA(FECHA);
+        md.setIDCAJA(G.IDCAJA);
+
+        int identradas = F.Registro("ENTRADAS","IDENTRADA","DESC");
+        md.setIDENTRADA(identradas);
+
+        ControlEntradas cp = new ControlEntradas();
+        cp.guardarRegistro(md);
+
+        ControlPagos cpag = new ControlPagos();
+        cpag.actualizarPagos(IDNOTA, "EFECTIVO", COMENTARIOS, monto,"SALDADO","");
+    }
+    
+    private void actualizarTablas() throws ClassNotFoundException, SQLException, Exception
+    {        
+        ModeloPagosTabla mtpn;
+        mtpn = new ModeloPagosTabla(CP);
+        tblPAGOS.setModel(mtpn);
+        F.dimensionar(tblPAGOS,"CP");
+        tp(CP);
+    }
+    
+    private void tp(String CP) throws ClassNotFoundException, SQLException, Exception
+    {
+        ControlPagos cc1 = new ControlPagos();
+        TOTAL = cc1.pagosPT(CP);
+        this.lblTOTAL.setText("$ "+G.numero.format(TOTAL)+".00");
+    }
+    
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        Bar = new javax.swing.JToolBar();
+        btnSALDAR = new javax.swing.JButton();
+        btnSALDAR1 = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        btnEXCEL = new javax.swing.JButton();
+        jspPAGOS = new javax.swing.JScrollPane();
+        tblPAGOS = new javax.swing.JTable();
+        txtBUSCAR = new javax.swing.JTextField();
+        txtCP = new javax.swing.JComboBox<>();
+        lblTOTAL = new javax.swing.JLabel();
+
+        setClosable(true);
+        setMaximizable(true);
+        setTitle("Centros de Pago foraneos");
+        setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/cp.png"))); // NOI18N
+        setPreferredSize(new java.awt.Dimension(800, 600));
+
+        Bar.setRollover(true);
+
+        btnSALDAR.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnSALDAR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/saldar.png"))); // NOI18N
+        btnSALDAR.setText("SALDAR");
+        btnSALDAR.setFocusable(false);
+        btnSALDAR.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSALDAR.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSALDAR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSALDARActionPerformed(evt);
+            }
+        });
+        Bar.add(btnSALDAR);
+
+        btnSALDAR1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnSALDAR1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/saldar1.png"))); // NOI18N
+        btnSALDAR1.setText("UNO A UNO");
+        btnSALDAR1.setToolTipText("SALDAR DE UNO A UNO");
+        btnSALDAR1.setFocusable(false);
+        btnSALDAR1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSALDAR1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSALDAR1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSALDAR1ActionPerformed(evt);
+            }
+        });
+        Bar.add(btnSALDAR1);
+
+        btnActualizar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/page_refresh.png"))); // NOI18N
+        btnActualizar.setText("ACTUALIZAR");
+        btnActualizar.setFocusable(false);
+        btnActualizar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnActualizar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+        Bar.add(btnActualizar);
+
+        btnEXCEL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnEXCEL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/excel.png"))); // NOI18N
+        btnEXCEL.setText("EXPORTAR");
+        btnEXCEL.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEXCEL.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEXCEL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEXCELActionPerformed(evt);
+            }
+        });
+        Bar.add(btnEXCEL);
+
+        jspPAGOS.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        tblPAGOS.setAutoCreateRowSorter(true);
+        tblPAGOS.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        tblPAGOS.setName("tblPAGOS"); // NOI18N
+        tblPAGOS.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblPAGOS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblPAGOSMouseClicked(evt);
+            }
+        });
+        jspPAGOS.setViewportView(tblPAGOS);
+
+        txtBUSCAR.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtBUSCAR.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Buscar:", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        txtBUSCAR.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBUSCARKeyTyped(evt);
+            }
+        });
+
+        txtCP.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtCP.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "VICTOR", "JUAN" }));
+        txtCP.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Centro de Pagos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        txtCP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCPActionPerformed(evt);
+            }
+        });
+
+        lblTOTAL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblTOTAL.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblTOTAL.setText("$ 0,000.00");
+        lblTOTAL.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Total:", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jspPAGOS, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+            .addComponent(Bar, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(txtBUSCAR)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTOTAL, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(Bar, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(txtBUSCAR)
+                        .addComponent(txtCP))
+                    .addComponent(lblTOTAL))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspPAGOS, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSALDARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSALDARActionPerformed
+        Object[] inputFields = {"¿SALDAR CUENTA COMPLETA?"};
+        int option = JOptionPane.showConfirmDialog(this, inputFields, "SALDAR CUENTA", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        if (option == JOptionPane.OK_OPTION)
+        {
+            try {                  
+            
+                accion("SALDAR");
+                actualizarTablas();
+            } catch (Exception ex) {
+                Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnSALDARActionPerformed
+
+    private void btnSALDAR1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSALDAR1ActionPerformed
+        Object[] inputFields = {"¿SALDAR UN PAGO?"};
+        int option = JOptionPane.showConfirmDialog(this, inputFields, "SALDAR UNO A UNO", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        if (option == JOptionPane.OK_OPTION)
+        {
+            try {                  
+                seleccion();
+                accion("UNO");
+                actualizarTablas();
+            } catch (Exception ex) {
+                Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }//GEN-LAST:event_btnSALDAR1ActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        try {
+            CP = this.txtCP.getSelectedItem().toString();
+            actualizarTablas();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void tblPAGOSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPAGOSMouseClicked
+        try {
+            seleccion();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tblPAGOSMouseClicked
+
+    private void txtBUSCARKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBUSCARKeyTyped
+        F.MAYUS(evt);
+        F.buscar(tblPAGOS, txtBUSCAR.getText(),null,0);
+    }//GEN-LAST:event_txtBUSCARKeyTyped
+
+    private void btnEXCELActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEXCELActionPerformed
+        F.exportarXLS(tblPAGOS,"\\REPORTES\\CENTROPAGOS");
+    }//GEN-LAST:event_btnEXCELActionPerformed
+
+    private void txtCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCPActionPerformed
+        try {
+            CP = this.txtCP.getSelectedItem().toString();
+            actualizarTablas();
+        } catch (SQLException ex) {
+            Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(VCPagos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_txtCPActionPerformed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar Bar;
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnEXCEL;
+    private javax.swing.JButton btnSALDAR;
+    private javax.swing.JButton btnSALDAR1;
+    private javax.swing.JScrollPane jspPAGOS;
+    private javax.swing.JLabel lblTOTAL;
+    private javax.swing.JTable tblPAGOS;
+    private javax.swing.JTextField txtBUSCAR;
+    private javax.swing.JComboBox<String> txtCP;
+    // End of variables declaration//GEN-END:variables
+
+}
+

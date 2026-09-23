@@ -1,0 +1,331 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor..
+ */
+package VISTA;
+
+import CONTROLADOR.F;
+import MODELO.ModeloPagosTabla;
+import java.awt.*;
+import java.awt.print.*;
+import java.sql.SQLException;
+import javax.swing.*;
+import javax.swing.table.TableModel;
+
+/**
+ *
+ * @author Oscar E Gonzalez G
+ */
+public final class ImpPagoClientes extends javax.swing.JPanel implements Printable
+{
+
+    private JOptionPane op;
+    private final JViewport vp = new JViewport();
+    private Integer opcion;
+    private final ModeloPagosTabla mrpt;
+    
+    /**
+     * Creates new form ImpPago
+     * @param FECHA
+     * @param CONTRATO
+     * @param TITULAR
+     * @param tabla
+     * @param D_CORTE
+     * @param SALDO
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     */
+    public ImpPagoClientes(String FECHA, String CONTRATO,  String TITULAR,TableModel tabla, String D_CORTE, String SALDO) throws ClassNotFoundException, SQLException {
+        vp.setBackground(Color.WHITE);
+        mrpt = new ModeloPagosTabla();
+        initComponents();
+        this.lblCONTRATO.setText(CONTRATO);
+        this.lblFECHA.setText(FECHA);
+        this.lblTITULAR.setText(TITULAR);
+        this.lblDCORTE.setText(D_CORTE);
+        this.lblSALDOVENCIDO.setText(SALDO);
+        this.tblPAGOSH.setModel(tabla);
+        resizer(jspPAGOSH,tblPAGOSH);        
+        F.dimensionar(tblPAGOSH,"PAGOSH");
+        //F.resizer(this,jspPAGOSH,tblPAGOSH);
+    }
+    
+    private void resizer(JScrollPane jsp, JTable tabla) throws ClassNotFoundException, SQLException
+    {
+        /*int v = (tblTABLA.getRowCount()*20)+70;
+        tblTABLA.setFillsViewportHeight(true);
+        tblTABLA.setPreferredScrollableViewportSize(new Dimension(180,v));*/        
+                
+        revalidate();
+        int a = tabla.getRowCount();
+        //System.out.println("cantida de desos "+a);
+        int w = jsp.getPreferredSize().width;                   //ancho scroll pane
+        //System.out.println("original de scrol ancho "+w);
+        int h1 = jsp.getViewport().getViewSize().height;        //altura viewport
+        //System.out.println("original de scrol alto "+h1);
+        int h2 = tabla.getPreferredScrollableViewportSize().height; //altura tabla
+        //System.out.println("original de tabla "+h2);
+        
+        if(h1<h2)
+            jsp.setSize(new Dimension(w, h1+27));
+        else
+            jsp.setSize(tabla.getPreferredScrollableViewportSize());
+        
+        int b=a*20;
+        /*jspTABLA.setPreferredSize(new Dimension(190,b));
+        jspTABLA.setMaximumSize(new Dimension(190,b));
+        jspTABLA.setMinimumSize(new Dimension(190,b));*/
+        //jspTABLA.setSize(185, 300);      
+        tabla.setPreferredSize(new Dimension(190,b));
+        tabla.setMaximumSize(new Dimension(190,b));
+        tabla.setMinimumSize(new Dimension(190,b));
+        tabla.setSize(190, b);
+        
+        h2=a*30;
+        int h3=h2+300;
+        //System.out.println("tamaño panel nuevo"+h3);
+        int w1 = 200;
+        
+        this.setSize(new Dimension(w1,h3));
+        this.setPreferredSize(new Dimension(w1,h3));
+        this.setMaximumSize(new Dimension(w1,h3));
+        this.setMinimumSize(new Dimension(w1,h3));
+        
+        this.repaint();
+
+        //this.tblTABLA.setModel(model);
+    }
+    
+    private void getOptionPane()
+    {
+        if(op != null)
+        {
+            return;
+        }
+        Component pdr =this.getParent(); 
+        while(pdr.getParent() != null)
+        {
+            if(pdr instanceof JOptionPane)
+            {
+                op = (JOptionPane)pdr;
+                break;
+            }            
+            pdr = pdr.getParent();
+        }
+    }
+    
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+        try
+        {
+            if (pageIndex > 0)             
+                    return NO_SUCH_PAGE;            
+            Graphics2D g2d=  (Graphics2D)graphics;
+            g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+            this.printAll(graphics);
+            return PAGE_EXISTS;
+        }
+        catch(Exception ex)
+        {
+            JOptionPane.showMessageDialog( null, "NO HAY OBJETOS A IMPRIMIR", "ERROR DE IMPRESION", JOptionPane.ERROR_MESSAGE);
+        }
+        return PAGE_EXISTS;
+    }
+    
+    public void Imprimir()
+    {
+        F.Imprimir(this);
+    }
+
+    public Integer getOpcion() {
+        return opcion;
+    }
+    
+    public JButton[] getButtons()
+    {
+        return new JButton[]{bntImprimir,bntCancelar};
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        bntImprimir = new javax.swing.JButton();
+        bntCancelar = new javax.swing.JButton();
+        lblLOGO = new javax.swing.JLabel();
+        lblFECHA = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        lblCONTRATO = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        lblTITULAR = new javax.swing.JLabel();
+        jspPAGOSH = new javax.swing.JScrollPane();
+        tblPAGOSH = new javax.swing.JTable();
+        jLabel6 = new javax.swing.JLabel();
+        lblDCORTE = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        lblSALDOVENCIDO = new javax.swing.JLabel();
+
+        bntImprimir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        bntImprimir.setText("IMPRIMIR");
+        bntImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntImprimirActionPerformed(evt);
+            }
+        });
+
+        bntCancelar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        bntCancelar.setText("CANCELAR");
+        bntCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntCancelarActionPerformed(evt);
+            }
+        });
+
+        setMaximumSize(new java.awt.Dimension(200, 300));
+        setMinimumSize(new java.awt.Dimension(80, 210));
+
+        lblLOGO.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblLOGO.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/DHN-SMALL.png"))); // NOI18N
+
+        lblFECHA.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
+        lblFECHA.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblFECHA.setText("00/00/0000");
+        lblFECHA.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Fecha:", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 6))); // NOI18N
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
+        jLabel5.setText("Madero #454 Ocotlán, Jal 392 922 4747, 392 121 1676");
+
+        jLabel7.setText("-----------------------------------");
+
+        lblCONTRATO.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        lblCONTRATO.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCONTRATO.setText("00000");
+        lblCONTRATO.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "No Contrato", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 10))); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 8)); // NOI18N
+        jLabel3.setText("Titular:");
+
+        lblTITULAR.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
+        lblTITULAR.setText("XXXXXXXXXX XXXXXXXXX XXXXXXXXXX XXXXX");
+
+        jspPAGOSH.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "HISTORIAL DE PAGO:", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 6))); // NOI18N
+        jspPAGOSH.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
+
+        tblPAGOSH.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
+        tblPAGOSH.setModel(mrpt);
+        jspPAGOSH.setViewportView(tblPAGOSH);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
+        jLabel6.setText("Realiza tu pago antes del dia:");
+
+        lblDCORTE.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblDCORTE.setText("0000.00");
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
+        jLabel8.setText("Tu saldo vencido es de:");
+
+        lblSALDOVENCIDO.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblSALDOVENCIDO.setText("0000.00");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblLOGO, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(lblFECHA, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTITULAR, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCONTRATO, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8)
+                            .addComponent(lblDCORTE, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblSALDOVENCIDO, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jspPAGOSH, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblLOGO, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblFECHA)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblCONTRATO)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTITULAR, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblDCORTE)
+                .addGap(1, 1, 1)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSALDOVENCIDO)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspPAGOSH, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addGap(2, 2, 2)
+                .addComponent(jLabel5)
+                .addGap(15, 15, 15))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void bntImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntImprimirActionPerformed
+        getOptionPane();
+        opcion = 1;
+        op.setValue(1);
+        F.copiarPanel(this);
+    }//GEN-LAST:event_bntImprimirActionPerformed
+
+    private void bntCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCancelarActionPerformed
+        getOptionPane();
+        op.setValue(0);
+        F.copiarPanel(this);
+    }//GEN-LAST:event_bntCancelarActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bntCancelar;
+    private javax.swing.JButton bntImprimir;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jspPAGOSH;
+    private javax.swing.JLabel lblCONTRATO;
+    private javax.swing.JLabel lblDCORTE;
+    private javax.swing.JLabel lblFECHA;
+    private javax.swing.JLabel lblLOGO;
+    private javax.swing.JLabel lblSALDOVENCIDO;
+    private javax.swing.JLabel lblTITULAR;
+    private javax.swing.JTable tblPAGOSH;
+    // End of variables declaration//GEN-END:variables
+}

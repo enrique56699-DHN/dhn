@@ -1,0 +1,350 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
+ */
+package VISTA;
+
+
+import CONTROLADOR.ControlContratos;
+import CONTROLADOR.F;
+import MODELO.ModeloClientesTabla;
+import MODELO.ModeloContratos;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.beans.PropertyVetoException;
+import java.util.logging.Level;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Logger;
+import javax.swing.JInternalFrame;
+import javax.swing.JTable;
+/**
+ *
+ * @author Enrique Orozco Alcala
+ */
+public class InfoClientes extends javax.swing.JDialog {
+
+    private String TIPO="SERVICIO";
+    private int ID=0, IDORDEN;
+    private String ESTADO;
+    private String DIRECCION;
+    /**
+     * Creates new form Tools
+     * @param parent
+     * @param modal
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     */        
+    public InfoClientes(java.awt.Frame parent, boolean modal) throws ClassNotFoundException, SQLException {
+        super(parent, modal);
+        initComponents();
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agenda.png")); 
+        setIconImage(icon);
+        setLocationRelativeTo(null);
+        F.teclas(this);
+    }
+    
+    public void mostrar(int IDCLIENTE) throws ClassNotFoundException, SQLException
+    {
+        ModeloClientesTabla mcts;
+        mcts = new ModeloClientesTabla("SERVICIO", IDCLIENTE);        
+        this.tblSERVICIOS.setModel(mcts);
+        F.dimensionar(tblSERVICIOS,"INFO");
+        
+        ModeloClientesTabla mctc;
+        mctc = new ModeloClientesTabla("INTERNET", IDCLIENTE);
+        this.tblINTERNET.setModel(mctc);
+        F.dimensionar(tblINTERNET,"INFO");
+    }    
+    
+    private void seleccion(JTable tabla) throws ClassNotFoundException, SQLException
+    {
+        int fila = tabla.getSelectedRow();
+        ID = (int) tabla.getValueAt(fila, 0);
+        ESTADO = tabla.getValueAt(fila, 0).toString();
+        IDORDEN = (int) tabla.getValueAt(fila, 2);        
+    }
+    
+    private void abrir(int ID, int IDORDEN, String TIPO) throws ParseException, Exception
+    {
+        switch(TIPO)
+        {
+            case "SERVICIO":
+                RegOrdenesPD reg = null;            
+                reg = new RegOrdenesPD(null,true);
+                reg.mostrar(ID,IDORDEN);
+                reg.setVisible(true);
+                break;
+            case "INTERNET":
+                JInternalFrame ji = validador.getJInternalFrame(VRegPagos.class.getName());
+                if(ji != null )
+                    ji.dispose();
+                try {
+                    ModeloContratos mdl;
+                    ControlContratos ctrl = new ControlContratos();
+                    mdl = ctrl.getRegistrosPAGO(ID);
+                    switch(ESTADO)
+                    {
+                        case "ACTIVO":
+                            break;
+                        case "SUSPENDIDO":
+                            break;    
+                        case "PENDIENTE":
+                            break;
+                        case "CANCELADO":                                
+                            break;
+                        case "RETIRAR":
+                            break;
+                        case "AUTORIZADO":
+                            break;    
+                        default: break;
+                    }
+                    ModeloContratos mdlC;
+                    ControlContratos ctrlC = new ControlContratos();
+                    mdlC = ctrlC.DIRECCION(ID);
+                    this.DIRECCION = mdlC.getCALLE()+" "+ mdlC.getNUMERO()+" "+mdlC.getCOLONIA()+" "+mdlC.getLOCALIDAD();
+
+                    ji = new VRegPagos(ID,"NUEVO",mdl.getDIAS(),mdl.getNOMBRE(),""+mdl.getCOSTO(),DIRECCION,false);
+                    Principal.getCONT().add(ji);
+                    validador.addJIframe(VRegPagos.class.getName(), ji);
+
+                } catch (ParseException ex) {
+                    Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                try {
+                    ji.setMaximum(true);
+                } catch (PropertyVetoException ex) {
+                    Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                ji.setVisible(true);
+                ji.moveToFront();
+                break;
+            default:
+                break;
+        }
+        this.dispose();
+    }
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        btnCERRAR = new javax.swing.JButton();
+        tbpServicios = new javax.swing.JTabbedPane();
+        pnlSERVICIOS = new javax.swing.JPanel();
+        jspSERVICIOS = new javax.swing.JScrollPane();
+        tblSERVICIOS = new javax.swing.JTable();
+        pnlCONTRATOS = new javax.swing.JPanel();
+        jspINTERNET = new javax.swing.JScrollPane();
+        tblINTERNET = new javax.swing.JTable();
+
+        btnCERRAR.setText("jButton1");
+        btnCERRAR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCERRARActionPerformed(evt);
+            }
+        });
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Servicios");
+
+        tbpServicios.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+
+        pnlSERVICIOS.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
+        tblSERVICIOS.setAutoCreateRowSorter(true);
+        tblSERVICIOS.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        tblSERVICIOS.setName("tblSERVICIOS"); // NOI18N
+        tblSERVICIOS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSERVICIOSMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblSERVICIOSMousePressed(evt);
+            }
+        });
+        jspSERVICIOS.setViewportView(tblSERVICIOS);
+
+        javax.swing.GroupLayout pnlSERVICIOSLayout = new javax.swing.GroupLayout(pnlSERVICIOS);
+        pnlSERVICIOS.setLayout(pnlSERVICIOSLayout);
+        pnlSERVICIOSLayout.setHorizontalGroup(
+            pnlSERVICIOSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jspSERVICIOS, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+        );
+        pnlSERVICIOSLayout.setVerticalGroup(
+            pnlSERVICIOSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSERVICIOSLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jspSERVICIOS, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tbpServicios.addTab("Servicios", pnlSERVICIOS);
+
+        pnlCONTRATOS.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
+        tblINTERNET.setAutoCreateRowSorter(true);
+        tblINTERNET.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        tblINTERNET.setName("tblSERVICIOS"); // NOI18N
+        tblINTERNET.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblINTERNETMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblINTERNETMousePressed(evt);
+            }
+        });
+        jspINTERNET.setViewportView(tblINTERNET);
+
+        javax.swing.GroupLayout pnlCONTRATOSLayout = new javax.swing.GroupLayout(pnlCONTRATOS);
+        pnlCONTRATOS.setLayout(pnlCONTRATOSLayout);
+        pnlCONTRATOSLayout.setHorizontalGroup(
+            pnlCONTRATOSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jspINTERNET, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+        );
+        pnlCONTRATOSLayout.setVerticalGroup(
+            pnlCONTRATOSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlCONTRATOSLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jspINTERNET, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tbpServicios.addTab("Internet", pnlCONTRATOS);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tbpServicios)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(tbpServicios, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void tblSERVICIOSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSERVICIOSMouseClicked
+        try {
+            // TODO add your handling code here:
+            seleccion(tblSERVICIOS);
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tblSERVICIOSMouseClicked
+
+    private void tblSERVICIOSMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSERVICIOSMousePressed
+        if (evt.getClickCount() > 1)
+        {
+            try {
+                seleccion(tblSERVICIOS);
+                abrir(ID, IDORDEN,"SERVICIO");
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }//GEN-LAST:event_tblSERVICIOSMousePressed
+
+    private void tblINTERNETMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblINTERNETMouseClicked
+        try {
+            seleccion(tblINTERNET);
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tblINTERNETMouseClicked
+
+    private void tblINTERNETMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblINTERNETMousePressed
+        // TODO add your handling code here:
+        if (evt.getClickCount() > 1)
+        {
+            try {
+                //editar();
+                seleccion(tblINTERNET);
+                abrir(ID, IDORDEN,"INTERNET");
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }//GEN-LAST:event_tblINTERNETMousePressed
+
+    private void btnCERRARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCERRARActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnCERRARActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(InfoClientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the dialog */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    InfoClientes dialog = new InfoClientes(new javax.swing.JFrame(), true);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (ClassNotFoundException | SQLException ex) {
+                    java.util.logging.Logger.getLogger(InfoClientes.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JButton btnCERRAR;
+    private javax.swing.JScrollPane jspINTERNET;
+    private javax.swing.JScrollPane jspSERVICIOS;
+    private javax.swing.JPanel pnlCONTRATOS;
+    private javax.swing.JPanel pnlSERVICIOS;
+    private javax.swing.JTable tblINTERNET;
+    private javax.swing.JTable tblSERVICIOS;
+    private javax.swing.JTabbedPane tbpServicios;
+    // End of variables declaration//GEN-END:variables
+}

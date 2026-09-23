@@ -1,0 +1,80 @@
+V 2
+*Login (admin,111)
+*CALCULADORA
+*Informacion
+*Respaldo de BD (CHECAR)
+*Aplicador de actualizacones
+*Configuracion (CAMBIAR NOMBRE A APARIENCIA)
+*Cambio de Contraseña (SOLO ES USUARIO ADMIN)
+*Registro de Clientes
+	-No. Cliente
+	-Nombre
+	-Apellidos
+	-Tel1
+	-Tel2
+	-Tel3
+	-Identificacion
+	-INE
+	-Comprobante
+*Registro de Direcciones
+	-No. Direccion
+	-No. Cliente
+	-Calle
+	-Numero
+	-Colonia
+	-Localidad
+	-Municipio
+	-Referencia
+	-Latitud
+	-Longitud
+*Registro de Antenas
+	-ID
+	-Nombre
+	-Marca
+	-MAC
+	-IP
+	-Estatus
+	-Observaciones
+	-Tipo
+*Registro Contratos de Internet
+	-No. Contrato
+	-No. de Direccion
+	-No. de Cliente
+	-No. de Paquete
+	-Fecha de instalacion
+	-Dia de corte
+		(colocar acceso a Periodos de pago)
+	-Comentarios
+	-Estatus
+		(se genera por colores , activo verde, vencido menor a 7 dias amarillo, mayor a 7 dias rojo, cancelado negro)
+	-No. de Antena
+	-No. router (Marca) o IP
+*Registro Paquetes
+	-No. Paquete
+	-Costo
+	-Descripcion del paquete
+*Registro Pagos
+	-No. pago
+	-Fecha realizado
+	-Monto
+	-Periodos que comprende
+	-No. Nota(EXTRAER LOS DATOS DE CLIENTE, DIRECCION, PAQUETE
+	-Comentarios
+	-Metodo(REVISAR AL MOSTRAR MARCAR EL METODO DE PAGO)
+*Registro Periodo (ESTE ES UN REPORTE)
+	"Este abrira tabla y detalles de pago
+*Registro de Productos
+*Registro de entradas y salidas
+*Registro de Reportes
+*Agenda 
+*Orden de trabajo
+*Informe de movimientos
+*Corte de caja (Aun no implementada)
+*Usuarios y privilegios (Aun no implementada)
+*Tools (ubiquiti)
+	-Control de antenas (NAT, activar y desactivar)
+	-Herramienta de configuracion Rapida
+
+
+SELECT * INTO OUTFILE 'C:\123.cvs' FROM pendientes WHERE ESTADO = 'FINALIZADO' AND NPEDIDO = '' AND NPEDIDOF = '' ORDER BY `IDPENDIENTE` DESC;
+SELECT prestacionesp.IDPRESTACIONP, empleados.NOMBRE, empleados.APELLIDOS, prestaciones.CONCEPTO, prestacionesp.FREG, prestacionesp.MONTO, prestacionesp.PERIODO, prestaciones.FINI, prestaciones.FFIN FROM prestacionesp INNER JOIN empleados ON empleados.IDEMPLEADO = prestacionesp.IDEMPLEADO INNER JOIN prestaciones ON prestaciones.IDPRESTACION = prestacionesp.IDPRESTACION
